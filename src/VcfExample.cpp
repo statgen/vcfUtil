@@ -115,7 +115,7 @@ int VcfExample::execute(int argc, char **argv)
         // Get the Genotype Information.
         for(int i = 0; i < numSamples; i++)
         {
-            genotypeVal = genotypeInfoPtr->getValue(gtField, i);
+            genotypeVal = genotypeInfoPtr->getString(gtField, i);
             // Need to make sure the field was found.
             if(genotypeVal != NULL)
             {
