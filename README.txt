@@ -1,8 +1,8 @@
 These files provide some programs for working on VCF files.
 --------------------------------------------------------------------------------
-To download & compile the required statgen library:
-  make download
-Next, to build this program:
+To use git to clone the required statgen library:
+  make cloneLib
+Next, to build libStatGen and this program:
   make
 To install:
   make install INSTALLDIR=pathToInstall

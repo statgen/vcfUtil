@@ -5,7 +5,7 @@
 VERSION=0.1.1
 
 CURRENT_PATH := $(dir $(lastword $(MAKEFILE_LIST)))
-LIB_PATH_GENERAL ?=../libStatGen
+LIB_PATH_GENERAL ?=../libStatGenVcf
 LIB_PATH_VCF_UTIL ?= $(LIB_PATH_GENERAL)
 
 # add any additional ../ as necessary if it is a relative path
@@ -13,16 +13,15 @@ ACTUAL_PATH := $(patsubst ../%, $(CURRENT_PATH)../%, $(LIB_PATH_VCF_UTIL))
 INCLUDE_MAKE := $(ACTUAL_PATH)/Makefiles/$(PARENT_MAKE)
 include $(INCLUDE_MAKE)
 
-.phony: libStatGen
+.phony: cloneLib
 
 $(INCLUDE_MAKE):
 	@echo Unable to locate: $(INCLUDE_MAKE)
 	@echo To change the location, set LIB_PATH_GENERAL or LIB_PATH_VCF_UTIL to the appropriate path to libStatGen.  Or specify \"make LIB_PATH_GENERAL=yourPath\" or \"make LIB_PATH_VCF_UTIL=yourPath\"
-	@echo Use make libStatGen if you have git and want to download and build the current libStatGen at that location
+	@echo Use make cloneLib if you have git and want to clone the current libStatGen at that location.
 
-
-libStatGen:
+cloneLib:
 	@if test -d $(LIB_PATH_VCF_UTIL); \
 	then echo $(LIB_PATH_VCF_UTIL) already exists; \
 	else git clone git://github.com/statgen/libStatGen.git $(LIB_PATH_VCF_UTIL); fi
-	$(MAKE) -C $(LIB_PATH_VCF_UTIL) --no-print-directory all; \
+	@echo Call make to compile libStatGen and this tool.
