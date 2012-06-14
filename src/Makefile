@@ -1,5 +1,5 @@
 EXE=vcfUtil
-TOOLBASE = VcfExecutable ReplaceReference HyunVcfFile VcfExample
+TOOLBASE = VcfExecutable ReplaceReference HyunVcfFile VcfExample VcfCleaner 
 SRCONLY = Main.cpp
 HDRONLY = Logger.h
 

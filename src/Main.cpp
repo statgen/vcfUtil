@@ -21,6 +21,7 @@
 
 #include "ReplaceReference.h"
 //#include "VcfCooker.h"
+#include "VcfCleaner.h"
 #include "VcfExample.h"
 
 void Usage()
@@ -28,7 +29,8 @@ void Usage()
     VcfExecutable::vcfExecutableDescription();
     std::cerr << std::endl;
     std::cerr << "Tools: " << std::endl;
-    ReplaceReference:: replaceReferenceDescription();
+    ReplaceReference::replaceReferenceDescription();
+    VcfCleaner::vcfCleanerDescription();
     //   VcfCooker:: vcfCookerDescription();
     std::cerr << std::endl;
     std::cerr << "Usage: " << std::endl;
@@ -53,15 +55,24 @@ int main(int argc, char ** argv)
     {
         vcfExe = new ReplaceReference();
     }
+    else if(strcmp(argv[1], "cleaner") == 0)
+    {
+        vcfExe = new VcfCleaner();
+    }
 //     if(strcmp(argv[1], "vcfCooker") == 0)
 //     {
 //         vcfExe = new VcfCooker();
 //     }
-     if(strcmp(argv[1], "vcfExample") == 0)
+    else if(strcmp(argv[1], "vcfExample") == 0)
     {
         vcfExe = new VcfExample();
     }
-  
+    else
+    {
+        std::cerr << "No tool specified\n";
+        Usage();
+        exit(-1);
+    }
     if(vcfExe != NULL)
     {
         int returnVal = vcfExe->execute(argc, argv);
