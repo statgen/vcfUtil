@@ -10,14 +10,20 @@ diff results/testConvert.log expected/testConvert.log
 let "status |= $?"
 
 ../bin/vcfUtil convert --in testFiles/testInvalidSampleExtra.vcf --uncompress --out results/testInvalidSampleExtra.vcf 2> results/testInvalidSampleExtra.log
-let "status |= $?"
+if [ $? == 0 ]
+then
+  let "status = 1"
+fi
 diff results/testInvalidSampleExtra.vcf expected/testInvalidSampleExtra.vcf
 let "status |= $?"
 diff results/testInvalidSampleExtra.log expected/testInvalidSampleExtra.log
 let "status |= $?"
 
 ../bin/vcfUtil convert --in testFiles/testInvalidSampleLess.vcf --uncompress --out results/testInvalidSampleLess.vcf 2> results/testInvalidSampleLess.log
-let "status |= $?"
+if [ $? == 0 ]
+then
+  let "status = 1"
+fi
 diff results/testInvalidSampleLess.vcf expected/testInvalidSampleLess.vcf
 let "status |= $?"
 diff results/testInvalidSampleLess.log expected/testInvalidSampleLess.log
