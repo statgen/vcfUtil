@@ -1,0 +1,2 @@
+terminate called after throwing an instance of 'std::runtime_error'
+  what():  FAIL_PARSE: Failed parsing the Genotype Fields of 3:32768 (chr:pos) - VCF Number of Fields in a Sample does not match the Format.

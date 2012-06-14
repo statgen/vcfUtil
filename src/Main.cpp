@@ -23,6 +23,7 @@
 //#include "VcfCooker.h"
 #include "VcfCleaner.h"
 #include "VcfExample.h"
+#include "VcfConvert.h"
 
 void Usage()
 {
@@ -31,7 +32,8 @@ void Usage()
     std::cerr << "Tools: " << std::endl;
     ReplaceReference::replaceReferenceDescription();
     VcfCleaner::vcfCleanerDescription();
-    //   VcfCooker:: vcfCookerDescription();
+    VcfConvert:: vcfConvertDescription();
+
     std::cerr << std::endl;
     std::cerr << "Usage: " << std::endl;
     std::cerr << "\tvcfUtil <tool> [<tool arguments>]" << std::endl;
@@ -67,12 +69,17 @@ int main(int argc, char ** argv)
     {
         vcfExe = new VcfExample();
     }
+    else if(strcmp(argv[1], "convert") == 0)
+    {
+        vcfExe = new VcfConvert();
+    }
     else
     {
         std::cerr << "No tool specified\n";
         Usage();
         exit(-1);
     }
+  
     if(vcfExe != NULL)
     {
         int returnVal = vcfExe->execute(argc, argv);

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2011  Regents of the University of Michigan
+ *  Copyright (C) 2012  Regents of the University of Michigan
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,48 +16,56 @@
  */
 
 //////////////////////////////////////////////////////////////////////////
-#include "VcfExample.h"
+#include "VcfConvert.h"
 
 #include "Parameters.h"
 #include "BgzfFileType.h"
 #include "VcfFileReader.h"
+#include "VcfFileWriter.h"
 
-void VcfExample::vcfExampleDescription()
+void VcfConvert::vcfConvertDescription()
 {
-    std::cerr << " vcfExample - Print the number of samples" << std::endl;
+    std::cerr << " convert - rewrite the vcf file" << std::endl;
 }
 
 
-void VcfExample::description()
+void VcfConvert::description()
 {
-    vcfExampleDescription();
+    vcfConvertDescription();
 }
 
 
-void VcfExample::usage()
+void VcfConvert::usage()
 {
     VcfExecutable::usage();
-    std::cerr << "\t./vcfUtil vcfExample --in <input VCF File> [--params]"<< std::endl;
+    std::cerr << "\t./vcfUtil convert --in <input VCF File> --out <output VCF File> [--params]"<< std::endl;
     std::cerr << "\tRequired Parameters:\n"
               << "\t\t--in      : VCF file to read\n"
+              << "\t\t--out     : VCF file to write\n"
               << "\tOptional Parameters:\n"
-              << "\t\t--params   : print the parameter settings\n"
+              << "\t\t--uncompress : write an uncompressed VCF output file\n"
+              << "\t\t--params     : print the parameter settings\n"
               << std::endl;
 }
 
 
 
-int VcfExample::execute(int argc, char **argv)
+int VcfConvert::execute(int argc, char **argv)
 {
     String refFile = "";
     String inputVcf = "";
     String outputVcf = "";
+    bool uncompress = false;
     bool params = false;
     
     // Read in the parameters.    
     ParameterList inputParameters;
     BEGIN_LONG_PARAMETERS(longParameterList)
+        LONG_PARAMETER_GROUP("Required Parameters")
         LONG_STRINGPARAMETER("in", &inputVcf)
+        LONG_STRINGPARAMETER("out", &outputVcf)
+        LONG_PARAMETER_GROUP("Optional Parameters")
+        LONG_PARAMETER("uncompress", &uncompress)
         LONG_PARAMETER("params", &params)
         END_LONG_PARAMETERS();
    
@@ -74,6 +82,13 @@ int VcfExample::execute(int argc, char **argv)
         std::cerr << "Missing \"--in\", a required parameter.\n\n";
         return(-1);
     }
+    if(outputVcf == "")
+    {
+        usage();
+        inputParameters.Status();
+        std::cerr << "Missing \"--out\", a required parameter.\n\n";
+        return(-1);
+    }
 
     if(params)
     {
@@ -81,67 +96,32 @@ int VcfExample::execute(int argc, char **argv)
     }
 
     VcfFileReader inFile;
+    VcfFileWriter outFile;
     VcfHeader header;
     
     // Open the file.
     inFile.open(inputVcf, header);
+    if(uncompress)
+    {
+        outFile.open(outputVcf, header, InputFile::DEFAULT);
+    }
+    else
+    {
+        outFile.open(outputVcf, header);
+    }
 
     VcfRecord record;
-    VcfRecordGenotype* genotypeInfoPtr = NULL;
-
     int numRecords = 0;
-    int maxSamples = 0;
-    int numSamples = 0;
-    const std::string* genotypeVal = NULL;
-    std::string gtField = "GT";
-    int numPhased = 0;
-    int numUnphased = 0;
 
     while(inFile.readRecord(record))
     {
         ++numRecords;
 
-        // Get the genotype inforamtion.
-        genotypeInfoPtr = &(record.getGenotypeInfo());
-
-        // Get the number of samples.
-        numSamples = genotypeInfoPtr->getNumSamples();
-
-        if(maxSamples < numSamples)
-        {
-            maxSamples = numSamples;
-        }
-
-        // Get the Genotype Information.
-        for(int i = 0; i < numSamples; i++)
-        {
-            genotypeVal = genotypeInfoPtr->getString(gtField, i);
-            // Need to make sure the field was found.
-            if(genotypeVal != NULL)
-            {
-                // Check if it is phased or unphased.
-                // This isn't pretty and there should be a method added for it.
-                for(unsigned int j = 0; j < genotypeVal->length(); j++)
-                {
-                    if((*genotypeVal)[j] == '|')
-                    {
-                        ++numPhased;
-                        break;
-                    }
-                    else if((*genotypeVal)[j] == '/')
-                    {
-                        ++numUnphased;
-                        break;
-                    }
-                }
-            }
-        }
+        outFile.writeRecord(record);
     }
  
     inFile.close();   
 
-    std::cerr << "NumRecords: " << numRecords << "; Max Samples: " << maxSamples
-              << "; Num Phased: " << numPhased << "; Num Unphased: " << numUnphased << "\n";
+    std::cerr << "NumRecords: " << numRecords << "\n";
     return(0);
 }
-
