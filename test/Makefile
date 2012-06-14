@@ -1,4 +1,4 @@
-TEST_COMMAND = ./testConvert.sh
+TEST_COMMAND = mkdir -p results; ./testConvert.sh
 
 TEST_CLEAN = 
 
