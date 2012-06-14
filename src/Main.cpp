@@ -20,8 +20,9 @@
 #include <stdlib.h>
 
 #include "ReplaceReference.h"
-//#include "VcfCooker.h"
+#include "VcfCooker.h"
 #include "VcfExample.h"
+#include "VcfConvert.h"
 
 void Usage()
 {
@@ -29,7 +30,8 @@ void Usage()
     std::cerr << std::endl;
     std::cerr << "Tools: " << std::endl;
     ReplaceReference:: replaceReferenceDescription();
-    //   VcfCooker:: vcfCookerDescription();
+    VcfCooker:: vcfCookerDescription();
+    VcfConvert:: vcfConvertDescription();
     std::cerr << std::endl;
     std::cerr << "Usage: " << std::endl;
     std::cerr << "\tvcfUtil <tool> [<tool arguments>]" << std::endl;
@@ -53,13 +55,22 @@ int main(int argc, char ** argv)
     {
         vcfExe = new ReplaceReference();
     }
-//     if(strcmp(argv[1], "vcfCooker") == 0)
-//     {
-//         vcfExe = new VcfCooker();
-//     }
-     if(strcmp(argv[1], "vcfExample") == 0)
+    else if(strcmp(argv[1], "vcfCooker") == 0)
+    {
+        vcfExe = new VcfCooker();
+    }
+    else if(strcmp(argv[1], "vcfExample") == 0)
     {
         vcfExe = new VcfExample();
+    }
+    else if(strcmp(argv[1], "convert") == 0)
+    {
+        vcfExe = new VcfConvert();
+    }
+    else
+    {
+        Usage();
+        exit(-1);
     }
   
     if(vcfExe != NULL)
