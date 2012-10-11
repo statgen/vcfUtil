@@ -29,6 +29,27 @@ let "status |= $?"
 diff results/testInvalidSampleLess.log expected/testInvalidSampleLess.log
 let "status |= $?"
 
+../bin/vcfUtil convert --in testFiles/testTabix.vcf --uncompress --out results/testTabix1.vcf --refName 1 2> results/testConvert1.log
+let "status |= $?"
+diff results/testTabix1.vcf expected/testTabix1.vcf
+let "status |= $?"
+diff results/testConvert1.log expected/testConvert1.log
+let "status |= $?"
+
+../bin/vcfUtil convert --in testFiles/testTabix.vcf --uncompress --out results/testTabix3.vcf --refName 3 2> results/testConvert3.log
+let "status |= $?"
+diff results/testTabix3.vcf expected/testTabix3.vcf
+let "status |= $?"
+diff results/testConvert3.log expected/testConvert3.log
+let "status |= $?"
+
+../bin/vcfUtil convert --in testFiles/testTabix.vcf --uncompress --out results/testTabix4.vcf --refName 4 2> results/testConvert4.log
+let "status |= $?"
+diff results/testTabix4.vcf expected/testTabix4.vcf
+let "status |= $?"
+diff results/testConvert4.log expected/testConvert4.log
+let "status |= $?"
+
 
 
 if [ $status != 0 ]

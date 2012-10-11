@@ -44,6 +44,8 @@ void VcfConvert::usage()
               << "\t\t--out     : VCF file to write\n"
               << "\tOptional Parameters:\n"
               << "\t\t--uncompress : write an uncompressed VCF output file\n"
+              << "\t\t--refName    : the reference (chromosome) name to read\n"
+              << "\t\t               Defaults to all references.\n"
               << "\t\t--params     : print the parameter settings\n"
               << std::endl;
 }
@@ -55,6 +57,7 @@ int VcfConvert::execute(int argc, char **argv)
     String refFile = "";
     String inputVcf = "";
     String outputVcf = "";
+    String refName = "";
     bool uncompress = false;
     bool params = false;
     
@@ -66,6 +69,7 @@ int VcfConvert::execute(int argc, char **argv)
         LONG_STRINGPARAMETER("out", &outputVcf)
         LONG_PARAMETER_GROUP("Optional Parameters")
         LONG_PARAMETER("uncompress", &uncompress)
+        LONG_STRINGPARAMETER("refName", &refName)
         LONG_PARAMETER("params", &params)
         END_LONG_PARAMETERS();
    
@@ -101,6 +105,12 @@ int VcfConvert::execute(int argc, char **argv)
     
     // Open the file.
     inFile.open(inputVcf, header);
+
+    if(refName != "")
+    {
+        inFile.setReadSection(refName.c_str());
+    }
+
     if(uncompress)
     {
         outFile.open(outputVcf, header, InputFile::DEFAULT);
