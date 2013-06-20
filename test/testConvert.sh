@@ -20,10 +20,7 @@ diff results/testInvalidSampleExtra.log expected/testInvalidSampleExtra.log
 let "status |= $?"
 
 ../bin/vcfUtil convert --in testFiles/testInvalidSampleLess.vcf --uncompress --out results/testInvalidSampleLess.vcf 2> results/testInvalidSampleLess.log
-if [ $? == 0 ]
-then
-  let "status = 1"
-fi
+let "status |= $?"
 diff results/testInvalidSampleLess.vcf expected/testInvalidSampleLess.vcf
 let "status |= $?"
 diff results/testInvalidSampleLess.log expected/testInvalidSampleLess.log
