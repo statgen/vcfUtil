@@ -18,6 +18,7 @@
 #include <iostream>
 #include <string.h>
 #include <stdlib.h>
+#include <stdexcept>
 
 #include "ReplaceReference.h"
 //#include "VcfCooker.h"
@@ -82,7 +83,19 @@ int main(int argc, char ** argv)
   
     if(vcfExe != NULL)
     {
-        int returnVal = vcfExe->execute(argc, argv);
+        int returnVal = 0;
+        try
+        {
+            returnVal = vcfExe->execute(argc, argv);
+        }
+        catch (std::runtime_error e)
+        {
+            std::string errorMsg = "Exiting due to ERROR:\n\t";
+            errorMsg += e.what();
+            std::cerr << errorMsg << std::endl;
+            returnVal = -1;
+        }
+
         delete vcfExe;
         vcfExe = NULL;
         return(returnVal);
