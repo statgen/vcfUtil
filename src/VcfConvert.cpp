@@ -43,10 +43,11 @@ void VcfConvert::usage()
               << "\t\t--in      : VCF file to read\n"
               << "\t\t--out     : VCF file to write\n"
               << "\tOptional Parameters:\n"
-              << "\t\t--uncompress : write an uncompressed VCF output file\n"
-              << "\t\t--refName    : the reference (chromosome) name to read\n"
-              << "\t\t               Defaults to all references.\n"
-              << "\t\t--params     : print the parameter settings\n"
+              << "\t\t--sampleSubset : file with samples IDs to keep.\n"
+              << "\t\t--uncompress   : write an uncompressed VCF output file\n"
+              << "\t\t--refName      : the reference (chromosome) name to read\n"
+              << "\t\t                 Defaults to all references.\n"
+              << "\t\t--params       : print the parameter settings\n"
               << std::endl;
 }
 
@@ -58,6 +59,13 @@ int VcfConvert::execute(int argc, char **argv)
     String inputVcf = "";
     String outputVcf = "";
     String refName = "";
+    String includeSampleSubset = "";
+    String excludeSampleSubset = "";
+    String includeIDs = "";
+    String excludeIDs = "";
+    String includeVariants = "";
+    String excludeVariants = "";
+    String sampleDelim = "\n";
     bool uncompress = false;
     bool params = false;
     
@@ -69,6 +77,13 @@ int VcfConvert::execute(int argc, char **argv)
         LONG_STRINGPARAMETER("out", &outputVcf)
         LONG_PARAMETER_GROUP("Optional Parameters")
         LONG_PARAMETER("uncompress", &uncompress)
+        LONG_STRINGPARAMETER("sampleInclude", &includeSampleSubset)
+        LONG_STRINGPARAMETER("sampleExclude", &excludeSampleSubset)
+        LONG_STRINGPARAMETER("sampleDelim", &sampleDelim)
+        LONG_STRINGPARAMETER("idInclude", &includeIDs)
+        LONG_STRINGPARAMETER("idExclude", &excludeIDs)
+        LONG_STRINGPARAMETER("variantInclude", &includeVariants)
+        LONG_STRINGPARAMETER("variantExclude", &excludeVariants)
         LONG_STRINGPARAMETER("refName", &refName)
         LONG_PARAMETER("params", &params)
         END_LONG_PARAMETERS();
@@ -93,6 +108,21 @@ int VcfConvert::execute(int argc, char **argv)
         std::cerr << "Missing \"--out\", a required parameter.\n\n";
         return(-1);
     }
+    if((includeSampleSubset != "") && (excludeSampleSubset != ""))
+    {
+        usage();
+        inputParameters.Status();
+        std::cerr << "ERROR: cannot specify both \"--includeSamples\" and \"--excludeSamples\".\n\n";
+        return(-1);
+    }
+
+    if((includeIDs != "") && (excludeIDs != ""))
+    {
+        usage();
+        inputParameters.Status();
+        std::cerr << "ERROR: cannot specify both \"--includeIDs\" and \"--excludeIDs\".\n\n";
+        return(-1);
+    }
 
     if(params)
     {
@@ -104,11 +134,32 @@ int VcfConvert::execute(int argc, char **argv)
     VcfHeader header;
     
     // Open the file.
-    inFile.open(inputVcf, header);
+    if(!includeSampleSubset.IsEmpty())
+    {
+        inFile.open(inputVcf, header, includeSampleSubset, NULL, NULL, sampleDelim);
+    }
+    else if(!excludeSampleSubset.IsEmpty())
+    {
+        inFile.open(inputVcf, header, NULL, NULL, excludeSampleSubset, sampleDelim);
+    }
+    else
+    {
+        inFile.open(inputVcf, header);
+    }
 
     if(refName != "")
     {
         inFile.setReadSection(refName.c_str());
+    }
+
+    // Read the include/exclude IDs into memory.
+    if(!includeIDs.IsEmpty())
+    {
+        inFile.setIncludeIDs(includeIDs);
+    }
+    else if(!excludeIDs.IsEmpty())
+    {
+        inFile.setExcludeIDs(excludeIDs);
     }
 
     if(uncompress)
