@@ -38,16 +38,20 @@ void VcfConvert::description()
 void VcfConvert::usage()
 {
     VcfExecutable::usage();
-    std::cerr << "\t./vcfUtil convert --in <input VCF File> --out <output VCF File> [--params]"<< std::endl;
+    std::cerr << "\t./vcfUtil convert --in <input VCF File> --out <output VCF File> [--sampleInclude|sampleExclude <filename>] [--sampleDelim] [--idInclude|idExclude <filename>] [--uncompress] [--refName <chrom>] [--params]"<< std::endl;
     std::cerr << "\tRequired Parameters:\n"
               << "\t\t--in      : VCF file to read\n"
               << "\t\t--out     : VCF file to write\n"
               << "\tOptional Parameters:\n"
-              << "\t\t--sampleSubset : file with samples IDs to keep.\n"
-              << "\t\t--uncompress   : write an uncompressed VCF output file\n"
-              << "\t\t--refName      : the reference (chromosome) name to read\n"
-              << "\t\t                 Defaults to all references.\n"
-              << "\t\t--params       : print the parameter settings\n"
+              << "\t\t--sampleInclude : file with samples IDs to keep.\n"
+              << "\t\t--sampleExclude : file with samples IDs to remove.\n"
+              << "\t\t--sampleDelim   : delimiter for the sample file (default is \\n.\n"
+              << "\t\t--idInclude     : file with variant IDs to keep.\n"
+              << "\t\t--idExclude     : file with variant IDs to remove.\n"
+              << "\t\t--uncompress    : write an uncompressed VCF output file\n"
+              << "\t\t--refName       : the reference (chromosome) name to read\n"
+              << "\t\t                  Defaults to all references.\n"
+              << "\t\t--params        : print the parameter settings\n"
               << std::endl;
 }
 
@@ -63,8 +67,8 @@ int VcfConvert::execute(int argc, char **argv)
     String excludeSampleSubset = "";
     String includeIDs = "";
     String excludeIDs = "";
-    String includeVariants = "";
-    String excludeVariants = "";
+    //    String includeVariants = "";
+    //    String excludeVariants = "";
     String sampleDelim = "\n";
     bool uncompress = false;
     bool params = false;
@@ -82,8 +86,8 @@ int VcfConvert::execute(int argc, char **argv)
         LONG_STRINGPARAMETER("sampleDelim", &sampleDelim)
         LONG_STRINGPARAMETER("idInclude", &includeIDs)
         LONG_STRINGPARAMETER("idExclude", &excludeIDs)
-        LONG_STRINGPARAMETER("variantInclude", &includeVariants)
-        LONG_STRINGPARAMETER("variantExclude", &excludeVariants)
+        //        LONG_STRINGPARAMETER("variantInclude", &includeVariants)
+        //        LONG_STRINGPARAMETER("variantExclude", &excludeVariants)
         LONG_STRINGPARAMETER("refName", &refName)
         LONG_PARAMETER("params", &params)
         END_LONG_PARAMETERS();
