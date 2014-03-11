@@ -46,6 +46,7 @@ void VcfConvert::usage()
               << "\t\t--uncompress : write an uncompressed VCF output file\n"
               << "\t\t--refName    : the reference (chromosome) name to read\n"
               << "\t\t               Defaults to all references.\n"
+              << "\t\t--noeof      : do not expect an EOF block on a BGZF file\n"
               << "\t\t--params     : print the parameter settings\n"
               << std::endl;
 }
@@ -60,6 +61,7 @@ int VcfConvert::execute(int argc, char **argv)
     String refName = "";
     bool uncompress = false;
     bool params = false;
+    bool noeof = false;
     
     // Read in the parameters.    
     ParameterList inputParameters;
@@ -70,6 +72,7 @@ int VcfConvert::execute(int argc, char **argv)
         LONG_PARAMETER_GROUP("Optional Parameters")
         LONG_PARAMETER("uncompress", &uncompress)
         LONG_STRINGPARAMETER("refName", &refName)
+        LONG_PARAMETER("noeof", &noeof)
         LONG_PARAMETER("params", &params)
         END_LONG_PARAMETERS();
    
@@ -97,6 +100,14 @@ int VcfConvert::execute(int argc, char **argv)
     if(params)
     {
         inputParameters.Status();
+    }
+
+    // If no eof block is required for a bgzf file, set the bgzf file type to 
+    // not look for it.
+    if(noeof)
+    {
+        // Set that the eof block is not required.
+        BgzfFileType::setRequireEofBlock(false);
     }
 
     VcfFileReader inFile;
