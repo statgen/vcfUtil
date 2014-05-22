@@ -25,6 +25,7 @@
 #include "VcfCleaner.h"
 #include "VcfExample.h"
 #include "VcfConvert.h"
+#include "VcfMac.h"
 
 void Usage()
 {
@@ -34,6 +35,7 @@ void Usage()
     ReplaceReference::replaceReferenceDescription();
     VcfCleaner::vcfCleanerDescription();
     VcfConvert:: vcfConvertDescription();
+    VcfMac:: vcfMacDescription();
 
     std::cerr << std::endl;
     std::cerr << "Usage: " << std::endl;
@@ -54,25 +56,31 @@ int main(int argc, char ** argv)
         exit(-1);
     }
 
-    if(strcmp(argv[1], "replaceReference") == 0)
+    String cmd = argv[1];
+
+    if(cmd.SlowCompare("replaceReference") == 0)
     {
         vcfExe = new ReplaceReference();
     }
-    else if(strcmp(argv[1], "cleaner") == 0)
+    else if(cmd.SlowCompare("cleaner") == 0)
     {
         vcfExe = new VcfCleaner();
     }
-//     if(strcmp(argv[1], "vcfCooker") == 0)
+//     if(cmd.SlowCompare("vcfCooker") == 0)
 //     {
 //         vcfExe = new VcfCooker();
 //     }
-    else if(strcmp(argv[1], "vcfExample") == 0)
+    else if(cmd.SlowCompare("vcfExample") == 0)
     {
         vcfExe = new VcfExample();
     }
-    else if(strcmp(argv[1], "convert") == 0)
+    else if(cmd.SlowCompare("convert") == 0)
     {
         vcfExe = new VcfConvert();
+    }
+    else if(cmd.SlowCompare("mac") == 0)
+    {
+        vcfExe = new VcfMac();
     }
     else
     {
