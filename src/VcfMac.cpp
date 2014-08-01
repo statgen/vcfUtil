@@ -75,6 +75,7 @@ int VcfMac::execute(int argc, char **argv)
         LONG_INTPARAMETER("minAC", &minAC)
         LONG_STRINGPARAMETER("filterList", &filterList)
         LONG_PARAMETER("params", &params)
+        LONG_PHONEHOME(VERSION)
         END_LONG_PARAMETERS();
    
     inputParameters.Add(new LongParameters ("Input Parameters", 

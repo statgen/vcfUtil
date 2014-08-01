@@ -74,6 +74,7 @@ int VcfConvert::execute(int argc, char **argv)
         LONG_STRINGPARAMETER("refName", &refName)
         LONG_PARAMETER("noeof", &noeof)
         LONG_PARAMETER("params", &params)
+        LONG_PHONEHOME(VERSION)
         END_LONG_PARAMETERS();
    
     inputParameters.Add(new LongParameters ("Input Parameters", 

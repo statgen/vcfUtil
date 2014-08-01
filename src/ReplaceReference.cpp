@@ -67,6 +67,7 @@ int ReplaceReference::execute(int argc, char **argv)
         LONG_STRINGPARAMETER("in", &inputVcf)
         LONG_STRINGPARAMETER("out", &outputVcf)
         LONG_PARAMETER("params", &params)
+        LONG_PHONEHOME(VERSION)
         END_LONG_PARAMETERS();
    
     inputParameters.Add(new LongParameters ("Input Parameters", 

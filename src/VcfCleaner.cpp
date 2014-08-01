@@ -67,6 +67,7 @@ int VcfCleaner::execute(int argc, char **argv)
         LONG_PARAMETER_GROUP("Optional Parameters")
         LONG_PARAMETER("uncompress", &uncompress)
         LONG_PARAMETER("params", &params)
+        LONG_PHONEHOME(VERSION)
         END_LONG_PARAMETERS();
    
     inputParameters.Add(new LongParameters ("Input Parameters", 

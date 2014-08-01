@@ -26,6 +26,7 @@
 #include "VcfExample.h"
 #include "VcfConvert.h"
 #include "VcfMac.h"
+#include "PhoneHome.h"
 
 void Usage()
 {
@@ -92,18 +93,23 @@ int main(int argc, char ** argv)
     if(vcfExe != NULL)
     {
         int returnVal = 0;
+        String compStatus;
         try
         {
             returnVal = vcfExe->execute(argc, argv);
         }
         catch (std::runtime_error e)
         {
+            compStatus = "Exception";
+            PhoneHome::completionStatus(compStatus.c_str());
             std::string errorMsg = "Exiting due to ERROR:\n\t";
             errorMsg += e.what();
             std::cerr << errorMsg << std::endl;
             returnVal = -1;
         }
 
+        compStatus = returnVal;
+        PhoneHome::completionStatus(compStatus.c_str());
         delete vcfExe;
         vcfExe = NULL;
         return(returnVal);
