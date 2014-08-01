@@ -26,6 +26,7 @@
 #include "VcfExample.h"
 #include "VcfConvert.h"
 #include "VcfMac.h"
+#include "VcfConsensus.h"
 #include "PhoneHome.h"
 
 void Usage()
@@ -37,6 +38,7 @@ void Usage()
     VcfCleaner::vcfCleanerDescription();
     VcfConvert:: vcfConvertDescription();
     VcfMac:: vcfMacDescription();
+    VcfConsensus:: vcfConsensusDescription();
 
     std::cerr << std::endl;
     std::cerr << "Usage: " << std::endl;
@@ -82,6 +84,10 @@ int main(int argc, char ** argv)
     else if(cmd.SlowCompare("mac") == 0)
     {
         vcfExe = new VcfMac();
+    }
+    else if(cmd.SlowCompare("consensus") == 0)
+    {
+        vcfExe = new VcfConsensus();
     }
     else
     {
