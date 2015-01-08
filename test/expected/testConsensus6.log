@@ -1,0 +1,14 @@
+Skipping 1 samples from --in2
+Skipping 1 samples from --in3
+
+
+File1 = testFiles/testTabix4.vcf
+File2 = testFiles/testTabix2.vcf
+File3 = testFiles/testTabix3.vcf
+
+Type	Total	0/0	0/1|1/0	1/1
+AllMatched	13	8	5	0
+1matched2	1	0	0	0
+1matched3	0	0	0	0
+2matched3	0	0	0	0
+NoneMatched	1

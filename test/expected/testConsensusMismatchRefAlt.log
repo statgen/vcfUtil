@@ -1,0 +1,15 @@
+Mismatching ref/alt found at 1:32768, so skipping this pos
+Mismatching ref/alt found at 3:32768, so skipping this pos
+Mismatching ref/alt found at 3:32780, so skipping this pos
+
+
+File1 = testFiles/testTabix2.vcf
+File2 = testFiles/testTabix.vcf
+File3 = testFiles/testTabix2.vcf
+
+Type	Total	0/0	0/1|1/0	1/1
+AllMatched	6	5	1	0
+1matched2	0	0	0	0
+1matched3	0	0	0	0
+2matched3	0	0	0	0
+NoneMatched	0

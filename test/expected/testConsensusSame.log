@@ -1,0 +1,12 @@
+
+
+File1 = testFiles/testTabix.vcf
+File2 = testFiles/testTabix.vcf
+File3 = testFiles/testTabix.vcf
+
+Type	Total	0/0	0/1|1/0	1/1
+AllMatched	24	14	10	0
+1matched2	0	0	0	0
+1matched3	0	0	0	0
+2matched3	0	0	0	0
+NoneMatched	0

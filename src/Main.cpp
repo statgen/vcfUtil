@@ -25,6 +25,7 @@
 #include "VcfCleaner.h"
 #include "VcfExample.h"
 #include "VcfConvert.h"
+#include "VcfSplit.h"
 #include "VcfMac.h"
 #include "VcfConsensus.h"
 #include "PhoneHome.h"
@@ -37,6 +38,7 @@ void Usage()
     ReplaceReference::replaceReferenceDescription();
     VcfCleaner::vcfCleanerDescription();
     VcfConvert:: vcfConvertDescription();
+    VcfSplit:: vcfSplitDescription();
     VcfMac:: vcfMacDescription();
     VcfConsensus:: vcfConsensusDescription();
 
@@ -80,6 +82,10 @@ int main(int argc, char ** argv)
     else if(cmd.SlowCompare("convert") == 0)
     {
         vcfExe = new VcfConvert();
+    }
+    else if(cmd.SlowCompare("split") == 0)
+    {
+        vcfExe = new VcfSplit();
     }
     else if(cmd.SlowCompare("mac") == 0)
     {

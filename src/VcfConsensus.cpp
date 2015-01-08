@@ -36,10 +36,11 @@ void VcfConsensus::vcfConsensusDescription()
 void VcfConsensus::description()
 {
     vcfConsensusDescription();
-    std::cerr << "\t* Only processes samples & sites found in --in1.\n";
-    std::cerr << "\t* Skips any sites not found in all 3 VCFs.\n";
+    std::cerr << "\t* Sites and samples not found in all 3 VCFs do not appear in the output VCF (silently skips sites not found in --in1).\n";
     std::cerr << "\t* If all 3 VCFs have a different genotype, \"./.\" will be output.\n";
     std::cerr << "\t* If at least 2 VCFs have the same genotype, that genotype will be output.\n";
+    std::cerr << "\t* Does not handle more than diploid genotypes.\n";
+    std::cerr << "\t* Keeps all non-GT genotype settings from --in1.\n";
     std::cerr << "\n";
 }
 
@@ -151,13 +152,57 @@ int VcfConsensus::execute(int argc, char ** argv)
 
     // Setup the sample name maps.
     int numSamples = header1.getNumSamples();
-    std::vector<int> sample1ToSample2;
-    std::vector<int> sample1ToSample3;
+    std::vector<int> sample2Indices;
+    std::vector<int> sample3Indices;
+    std::vector<int> removeIndices;
+    int numSamplesSkipped1 = 0;
+    int numSamplesSkipped2 = 0;
+    int numSamplesSkipped3 = 0;
     for(int i = 0; i < numSamples; i++)
     {
+        int sm2Index = header2.getSampleIndex(header1.getSampleName(i));
+        int sm3Index = header3.getSampleIndex(header1.getSampleName(i));
         // Look for this sample name in vcf2.
-        sample1ToSample2.push_back(header2.getSampleIndex(header1.getSampleName(i)));
-        sample1ToSample3.push_back(header3.getSampleIndex(header1.getSampleName(i)));
+        if((sm2Index != -1) && (sm3Index != -1))
+        {
+            sample2Indices.push_back(sm2Index);
+            sample3Indices.push_back(sm3Index);
+        }
+        else
+        {
+            // Sample not found in all three vcfs.
+            removeIndices.push_back(i);
+            ++numSamplesSkipped1;
+        }
+    }
+    // Remove samples not found in all 3 vcfs from header1.
+    // Remove them in reverse order so they are removed from the end of the header first.
+    VcfSubsetSamples subset1;
+    subset1.init(header1, true);
+    for(int i = (removeIndices.size() - 1); i >= 0; i--)
+    {
+        subset1.addExcludeSample(header1.getSampleName(removeIndices[i]));
+        header1.removeSample(removeIndices[i]);
+    }
+
+    // Set numSamples to the new number of samples in header1.
+    numSamples = header1.getNumSamples();
+
+    // Calculate the number of samples skipped for files 2 & 3.
+    numSamplesSkipped2 = header2.getNumSamples() - sample2Indices.size();
+    numSamplesSkipped3 = header3.getNumSamples() - sample3Indices.size();
+
+    if(numSamplesSkipped1 > 0)
+    {
+        std::cerr << "Skipping " << numSamplesSkipped1 << " samples from --in1\n";
+    }
+    if(numSamplesSkipped2 > 0)
+    {
+        std::cerr << "Skipping " << numSamplesSkipped2 << " samples from --in2\n";
+    }
+    if(numSamplesSkipped3 > 0)
+    {
+        std::cerr << "Skipping " << numSamplesSkipped3 << " samples from --in3\n";
     }
 
     VcfFileWriter outputVcf;
@@ -203,7 +248,7 @@ int VcfConsensus::execute(int argc, char ** argv)
     uint64_t num2Match3Only11 = 0;
 
     // Loop through vcf1.
-    while(vcf1.readRecord(record1))
+    while(vcf1.readRecord(record1, &subset1))
     {
         chrom1 = record1.getChromStr();
         pos1 = record1.get1BasedPosition();
@@ -268,13 +313,13 @@ int VcfConsensus::execute(int argc, char ** argv)
         genotypeInfoPtr2 = &(record2.getGenotypeInfo());
         genotypeInfoPtr3 = &(record3.getGenotypeInfo());
 
-        // Loop through all the samples in chrom1.
+        // Loop through all the samples in vcf1.
         // Get the Genotype Information.
         for(int i = 0; i < numSamples; i++)
         {
             const std::string* genotypeVal1 = genotypeInfoPtr1->getString(gtField, i);
-            const std::string* genotypeVal2 = genotypeInfoPtr2->getString(gtField, sample1ToSample2[i]);
-            const std::string* genotypeVal3 = genotypeInfoPtr3->getString(gtField, sample1ToSample3[i]);
+            const std::string* genotypeVal2 = genotypeInfoPtr2->getString(gtField, sample2Indices[i]);
+            const std::string* genotypeVal3 = genotypeInfoPtr3->getString(gtField, sample3Indices[i]);
             // Need to make sure the field was found.
             if(genotypeVal1 == NULL)
             {
@@ -413,7 +458,7 @@ int VcfConsensus::execute(int argc, char ** argv)
     std::cerr << "File1 = " << vcfName1 << std::endl;
     std::cerr << "File2 = " << vcfName2 << std::endl;
     std::cerr << "File3 = " << vcfName3 << std::endl;
-    std::cerr << "\nType\tTotal\t0/0\t0/1\t1/1\n";
+    std::cerr << "\nType\tTotal\t0/0\t0/1|1/0\t1/1\n";
     std::cerr << "AllMatched" 
               << "\t" << numAllMatch
               << "\t" << numAllMatch00 
@@ -454,13 +499,13 @@ bool isSame(const std::string* gt1, const std::string* gt2)
     }
 
     // Check for 0/1 && 1/0
-    if((*gt1 == "0/1") && (*gt2 == "1/0"))
+    if((gt1->length() == 3) && (gt2->length() == 3))
     {
-        return(true);
-    }
-    if((*gt1 == "1/0") && (*gt2 == "0/1"))
-    {
-        return(true);
+        // Check if the alleles are in a different order.
+        if((gt1->at(0) == gt2->at(2)) && (gt1->at(2) == gt2->at(0)))
+        {
+            return(true);
+        }
     }
     return(false);
 }

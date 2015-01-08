@@ -1,0 +1,15 @@
+Skipping 1 samples from --in1
+Skipping 1 samples from --in3
+Failed to find 3:32768 in testFiles/testTabix4.vcf, so skipping this pos
+
+
+File1 = testFiles/testTabix3.vcf
+File2 = testFiles/testTabix4.vcf
+File3 = testFiles/testTabix2.vcf
+
+Type	Total	0/0	0/1|1/0	1/1
+AllMatched	13	8	5	0
+1matched2	0	0	0	0
+1matched3	0	0	0	0
+2matched3	1	0	0	0
+NoneMatched	1

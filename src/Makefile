@@ -1,5 +1,5 @@
 EXE=vcfUtil
-TOOLBASE = VcfExecutable ReplaceReference HyunVcfFile VcfExample VcfCleaner  VcfConvert VcfMac IntervalTree Interval VcfConsensus
+TOOLBASE = VcfExecutable ReplaceReference HyunVcfFile VcfExample VcfCleaner  VcfConvert VcfMac IntervalTree Interval VcfConsensus VcfSplit
 SRCONLY = Main.cpp
 HDRONLY = Logger.h
 
