@@ -12,7 +12,6 @@ LIB_PATH_VCF_UTIL ?= $(LIB_PATH_GENERAL)
 ACTUAL_PATH := $(if $(filter-out /%,$(LIB_PATH_VCF_UTIL)), \
         $(addprefix $(CURRENT_PATH), $(LIB_PATH_VCF_UTIL)), \
         $(LIB_PATH_VCF_UTIL))
-ACTUAL_PATH := $(patsubst ../%, $(CURRENT_PATH)../%, $(LIB_PATH_VCF_UTIL))
 INCLUDE_MAKE := $(ACTUAL_PATH)/Makefiles/$(PARENT_MAKE)
 include $(INCLUDE_MAKE)
 
